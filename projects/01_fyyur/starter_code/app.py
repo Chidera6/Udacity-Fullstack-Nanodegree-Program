@@ -161,7 +161,7 @@ def venues():
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
   user_to_search = request.form.get('search_term')
-  x = db.session.query(Venue).with_entities(Venue.id, Venue.name).filter(Venue.name.ilike('%' + user_to_search + '%')).all()
+  x = db.session.query(Venue).with_entities(Venue.id, Venue.name).filter(Venue.name.ilike(f"%{user_to_search}%").all())
   
   data = []
   for i in x:
@@ -353,13 +353,14 @@ def artists():
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
   user_to_search = request.form.get('search_term').lower()
-  x = db.session.query(Artist).with_entities(Artist.id, Artist.name).filter(Artist.name.ilike('%' + user_to_search+ '%')).all()
+  x = db.session.query(Artist).with_entities(Artist.id, Artist.name).filter(Artist.name.ilike(f"%{user_to_search}%").all())
   data = []
   for i in x:
     data.append({
       'id': i.id,
       'name': i.name
     })
+    
   response = {
     'count': len(x),
     'data': data
@@ -381,7 +382,7 @@ def search_artists():
 def show_artist(artist_id):
   data = Artist.query.get(artist_id)
   # shows the artist page with the given artist_id
-  """
+  
   # TODO: replace with real artist data from the artist table, using artist_id
   data1={
     "id": 4,
@@ -455,7 +456,7 @@ def show_artist(artist_id):
     "upcoming_shows_count": 3,
   }
   data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
-  """
+
   return render_template('pages/show_artist.html', artist=data)
 
 
@@ -631,7 +632,6 @@ def shows():
     "artist_name": show.artist.name,
     "artist_image_link": show.artist.image_link,
     "start_time": str(show.start_time)})
-  
   # displays list of shows at /shows
   # TODO: replace with real venues data.
   data=[{
