@@ -406,8 +406,8 @@ def show_artist(artist_id):
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
-  form = ArtistForm()
   artist = Artist.query.get(artist_id)
+  form = ArtistForm()
   print(artist)
   form.name.data = artist.name
   form.city.data = artist.city
@@ -439,8 +439,9 @@ def edit_artist(artist_id):
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-  form = ArtistForm(request.form)
+  
   artist = Artist.query.get(artist_id)
+  form = ArtistForm(request.form)
   try:
     if artist is not None:
       artist.name = form.name.data
@@ -457,6 +458,7 @@ def edit_artist_submission(artist_id):
       db.session.commit()
       flash('Artist ' + form.name.data + ' was successfully updated!')
   except Exception as error:
+      
       flash('An error occurred. Artist' + form.name.data + 'could not be updated.')
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
@@ -498,7 +500,7 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-  form = VenueForm()
+  form = VenueForm(request.form)
   venue = Venue.query.get(venue_id)
   try:
     if venue is not None:
@@ -530,34 +532,48 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  form = ArtistForm()
+  """
+  form = ArtistForm(request.form,meta={'csrf':False})
   user_to_create = Artist()
-  try:
-    user_to_create = Artist(
-    name=form.name.data,
-    city=form.city.data,
-    state=form.state.data,
-    phone=form.phone.data,
-    genres=form.genres.data,
-    image_link=form.image_link.data,
-    facebook_link=form.facebook_link.data,
-    website_link=form.website_link.data,
-    seeking_venue=form.seeking_venue.data,
-    seeking_description=form.seeking_description.data)
+  user_to_create = Artist(
+  name=form.name.data,
+  city=form.city.data,
+  state=form.state.data,
+  phone=form.phone.data,
+  genres=form.genres.data,
+  image_link=form.image_link.data,
+  facebook_link=form.facebook_link.data,
+  website_link=form.website_link.data,
+  seeking_venue=form.seeking_venue.data,
+  seeking_description=form.seeking_description.data)
 
-    db.session.add(user_to_create)
-    db.session.commit()
-    flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  except Exception as error:
-    flash('Artist ' + request.form['name'] + ' could not be  listed!')
+  db.session.add(user_to_create)
+  db.session.commit()
+  flash('Artist ' + request.form['name'] + ' was successfully listed!')
+ #flash('Artist ' + request.form['name'] + ' could not be  listed!')
   # called upon submitting the new artist listing form
+  """
+  name = request.form['name']
+  city = request.form['city']
+  state = request.form['state']
+  phone = request.form['phone']
+  genres = request.form['genres']
+  image_link = request.form['image_link']
+  facebook_link = request.form['facebook_link']
+  website_link = request.form['website_link']
+  seeking_venue = request.form['seeking_venue']
+  seeking_description = request.form['seeking_description']
+  user_to_create = Artist(name=name,city=city,state=state,phone=phone,genres=genres,image_link=image_link,
+  facebook_link=facebook_link,website_link=website_link,seeking_venue=seeking_venue,seeking_description=seeking_description)
+  db.session.add(user_to_create)
+  db.session.commit()
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
   # on successful db insert, flash success
   # TODO: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
+  
   return render_template('pages/home.html')
-
 
 #  Shows
 #  ----------------------------------------------------------------
@@ -620,7 +636,7 @@ def create_shows():
   form = ShowForm()
   return render_template('forms/new_show.html', form=form)
 
-@app.route('/shows/create', methods=['GET','POST'])
+@app.route('/shows/create', methods=['POST'])
 def create_show_submission():
   form = ShowForm()
   try:
