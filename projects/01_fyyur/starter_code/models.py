@@ -1,10 +1,18 @@
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_moment import Moment
-import datetime
+from flask_migrate import Migrate
+app = Flask(__name__)
+moment = Moment(app)
+app.config.from_object('config')
+db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:chidera@localhost:5432/fyyur'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+migrate = Migrate(app, db)
 
-db = SQLAlchemy()
+# TODO: connect to a local postgresql database
 class Venue(db.Model):
     __tablename__ = 'venue'
 
@@ -62,4 +70,5 @@ class Show(db.Model):
 
     def __repr__(self):
       return f'<Show {self.id}, date: {self.date}, artist_id: {self.artist_id}, venue_id: {self.venue_id}>'
+
 

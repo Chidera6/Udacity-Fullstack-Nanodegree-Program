@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 2b409ab2fb7a
+Revision ID: 5f45339390e9
 Revises: 
-Create Date: 2022-05-25 22:05:16.742000
+Create Date: 2022-06-10 00:34:11.959886
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2b409ab2fb7a'
+revision = '5f45339390e9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,13 +24,12 @@ def upgrade():
     sa.Column('city', sa.String(length=120), nullable=False),
     sa.Column('state', sa.String(length=120), nullable=False),
     sa.Column('phone', sa.String(length=120), nullable=False),
-    sa.Column('genres', sa.String(length=120), nullable=False),
+    sa.Column('genres', sa.ARRAY(sa.String(length=120)), nullable=False),
     sa.Column('image_link', sa.String(length=500), nullable=False),
     sa.Column('facebook_link', sa.String(length=120), nullable=False),
     sa.Column('website_link', sa.String(length=500), nullable=False),
-    sa.Column('seeking_venue', sa.Boolean(), nullable=False),
+    sa.Column('seeking_venue', sa.Boolean(), nullable=True),
     sa.Column('seeking_description', sa.String(), nullable=False),
-    sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('venue',
@@ -40,13 +39,12 @@ def upgrade():
     sa.Column('state', sa.String(length=120), nullable=False),
     sa.Column('address', sa.String(length=120), nullable=False),
     sa.Column('phone', sa.String(length=120), nullable=False),
-    sa.Column('genres', sa.String(length=120), nullable=False),
+    sa.Column('genres', sa.ARRAY(sa.String(length=120)), nullable=False),
     sa.Column('image_link', sa.String(length=500), nullable=False),
     sa.Column('facebook_link', sa.String(length=120), nullable=False),
     sa.Column('website_link', sa.String(length=500), nullable=False),
-    sa.Column('seeking_talent', sa.Boolean(), nullable=False),
+    sa.Column('seeking_talent', sa.Boolean(), nullable=True),
     sa.Column('seeking_description', sa.String(length=500), nullable=False),
-    sa.Column('created_on', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('shows',
