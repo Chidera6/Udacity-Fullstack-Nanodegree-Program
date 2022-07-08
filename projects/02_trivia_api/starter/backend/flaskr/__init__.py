@@ -130,15 +130,15 @@ def create_app(test_config=None):
   def quiz_question():
     try:
       previousquestions = request.get_json()['previous_questions']
-      #gets the previous question list
+      #gets the previous_question list store it in previousquestions variable
       current_category = request.get_json()['quiz_category']
-      #gets the quiz category
+      #gets the quiz_category store it in current_category varaible
       if (current_category['id'] == 0):
         questions = Question.query.all()
-        #if quiz category is 0 obtain question from any category
+        #if quiz category is 0 obtain question from any category in the whole categories
       else:
         questions = Question.query.filter_by(category=current_category['id']).all()
-        #if there is a quiz category obtain questions from that category
+        #if there is a quiz category obtain questions from that  particular category
         for q in questions:
           #loop through the obtained questions
           if q not in previousquestions:
@@ -152,7 +152,7 @@ def create_app(test_config=None):
             x = random.randint(0,len(questions)-1)
             #make the obtained questions to come randomly using the function assign it to a variable x
             next_question = questions[x]
-            #assign next_question to this randomn variable
+            #assign next_question to this random variable
             return jsonify({
               "success": True,
               "question":next_question.format()
