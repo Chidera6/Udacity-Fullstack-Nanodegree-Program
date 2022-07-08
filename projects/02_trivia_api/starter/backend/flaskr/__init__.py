@@ -44,7 +44,7 @@ def create_app(test_config=None):
       })
 
   
-  @app.route("/questions?page=${integer}")
+  @app.route("/questions")
   def retrieve_question():
     selection = Question.query.order_by(Question.id).all()
     current_questions = paginate_questions(request, selection)
@@ -125,29 +125,41 @@ def create_app(test_config=None):
     else:
       abort(404)
 
+   
   @app.route("/quizzes",methods=['POST'])
   def quiz_question():
     try:
-      body = request.get_json()
-      previous_questions = body.get('previous_questions', None)
-      new_category = body.get('new_category', None)
-      category_id = new_category['id']
-      if category_id == 0:
-        questions = Question.query.filter(Question.id.notin_(previous_questions)).all()
+      previousquestions = request.get_json()['previous_questions']
+      #gets the previous question list
+      current_category = request.get_json()['quiz_category']
+      #gets the quiz category
+      if (current_category['id'] == 0):
+        questions = Question.query.all()
+        #if quiz category is 0 obtain question from any category
       else:
-        questions = Question.query.filter(Question.id.notin_(previous_questions),
-        Question.category == category_id).all()
-        question = None
-        if(questions):
-          question = random.choice(questions)
-          return jsonify({
-                'success': True,
-                'question': question.format()
+        questions = Question.query.filter_by(category=current_category['id']).all()
+        #if there is a quiz category obtain questions from that category
+        for q in questions:
+          #loop through the obtained questions
+          if q not in previousquestions:
+            #check if the question q is not in previous question array ie questions the person has answered before
+            next_question = q
+            #then the looped variable == the next question to be asked
+          elif len(previousquestions) == len(questions):
+            #when the length of previous question is == length of questions obtained from the database
+            next_question = None
+            #then no more next questions
+            x = random.randint(0,len(questions)-1)
+            #make the obtained questions to come randomly using the function assign it to a variable x
+            next_question = questions[x]
+            #assign next_question to this randomn variable
+            return jsonify({
+              "success": True,
+              "question":next_question.format()
             })
-
     except Exception:
-            abort(422)
-
+      abort(404)
+      
   '''
   @TODO:
   Create error handlers for all expected errors

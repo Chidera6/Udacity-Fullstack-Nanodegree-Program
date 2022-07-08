@@ -106,10 +106,11 @@ class TriviaTestCase(unittest.TestCase):
         
 
     def test_question_search_fails(self):
-        res = self.client().post("/search",json={"search":"zadidedera"})
+        res = self.client().post("questions/search",json={"search":''})
         data = json.loads(res.data)
-        self.assertEqual(res.status_code, 422)
+        self.assertEqual(res.status_code, 404)
         self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "resource not found")
         
 
 
@@ -129,7 +130,7 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_quiz_question(self):
         res = self.client().post("/quizzes", json={ 
-            "previous_questions": 5,'new_category': {
+            "previous_questions": [],'quiz_category': {
                 'type': 'Entertainment',
                 'id': '3'
             }})
@@ -141,7 +142,7 @@ class TriviaTestCase(unittest.TestCase):
     def test_quiz_not_found_category(self):
         res = self.client().post('/quizzes', json={
             "previous_questions": [6],
-            "new_category": {
+            "quiz_category": {
                 "type": "vision science",
                 "id": "5000"
             }
